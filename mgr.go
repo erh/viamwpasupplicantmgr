@@ -30,6 +30,10 @@ func newManager(ctx context.Context, deps resource.Dependencies, conf resource.C
 		return nil, err
 	}
 
+	if newConf.Filename == "" {
+		newConf.Filename = "/etc/wpa_supplicant/wpa_supplicant.conf"
+	}
+
 	m := &mgr{
 		name: conf.ResourceName(),
 		cfg:  newConf,
@@ -54,11 +58,18 @@ func (c *Credentials) Equals(other Credentials) bool {
 }
 
 type Config struct {
-	resource.TriviallyValidateConfig
-
 	Filename string
 	Preample string
 	Networks []Credentials
+}
+
+func (c *Config) Validate(path string) ([]string, error) {
+	for _, n := range c.Networks {
+		if len(n.PSK) < 8 {
+			return nil, fmt.Errorf("network password must be at least 8 characters")
+		}
+	}
+	return nil, nil
 }
 
 type mgr struct {
@@ -149,7 +160,6 @@ func parseFile(data string) (string, []Credentials, error) {
 		if l == "" {
 			continue
 		}
-		fmt.Printf("line [%s]\n", l)
 		if inNetwork {
 			if l == "}" {
 				inNetwork = false
@@ -179,7 +189,6 @@ func parseFile(data string) (string, []Credentials, error) {
 			preample = preample + l + "\n"
 		}
 	}
-	fmt.Printf("preample [%s]\n", preample)
 	return preample, creds, nil
 }
 
