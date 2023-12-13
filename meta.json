@@ -1,0 +1,13 @@
+{
+  "module_id": "erh:viamwpasupplicantmgr",
+  "visibility": "public",
+  "url": "https://github.com/erh/viamwpasupplicantmgr",
+  "description": "mananges wpa supplicant file",
+  "models": [
+    {
+      "api": "rdk:component:generic",
+      "model": "erh:viamwpasupplicantmgr:manager"
+    }
+  ],
+  "entrypoint": "bin/viamwpasupplicantmgr"
+}
