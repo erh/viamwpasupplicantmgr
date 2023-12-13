@@ -9,12 +9,13 @@ import (
 
 func TestContents(t *testing.T) {
 	m := mgr{
-		creds: []Credentials{
-			{"a", "b"},
-			{"x", "y"},
+		cfg: &Config{
+			Networks: []Credentials{
+				{"a", "b"},
+				{"x", "y"},
+			},
 		},
 	}
-
 
 	s := m.contents()
 	test.That(t, s, test.ShouldEqual, `ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -40,10 +41,12 @@ func TestCheckFileContents(t *testing.T) {
 	defer os.Remove(f.Name())
 
 	m := mgr{
-		filename: f.Name(),
-		creds: []Credentials{
-			{"a", "b"},
-			{"x", "y"},
+		cfg: &Config{
+			Filename: f.Name(),
+			Networks: []Credentials{
+				{"a", "b"},
+				{"x", "y"},
+			},
 		},
 	}
 
